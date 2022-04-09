@@ -15,6 +15,7 @@ import com.example.barbercornerproj.model.CustomerModel;
 import com.example.barbercornerproj.model.DataModel;
 import com.example.barbercornerproj.model.MessageModel;
 import com.example.barbercornerproj.model.NotifyModel;
+import com.example.barbercornerproj.model.RatingModel;
 import com.example.barbercornerproj.model.StaffModel;
 
 import java.util.ArrayList;
@@ -64,6 +65,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String STATUS_SENT = "Sent";
 
     public static final int ADMIN_USER_ID = 1;
+
+    //Rating Table
+    public static final String RATING_TABLE = "RATING_TABLE";
+    public static final String COL_RATING_ID = "ratingId";
+    public static final String COL_CUSID = "cusId";
+    public static final String COL_BARID = "barId";
+    public static final String COL_COMMENT = "comment";
+    public static final String COL_RATING = "rating";
 
     //  Booking Table
     static class BOOKING_TABLE {
@@ -134,6 +143,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + OrderHelper.COLUMN_QUANTITY +" TEXT NOT NULL,"
                 + OrderHelper.COLUMN_PRICE +" TEXT NOT NULL);";
         db.execSQL(SQL_TABLE);
+
+        //Create rating table
+        String ratingTable = " CREATE TABLE " + RATING_TABLE + "(" +
+                COL_RATING_ID + "INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COL_RATING + "TEXT," +
+                COL_COMMENT + "TEXT)";
+        db.execSQL(ratingTable);
+
 
     }
 
@@ -220,6 +237,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_MESSAGE, dataModel.getMessage());
 
         long insert = db.insert(MESSAGES_TABLE, null, cv);
+        if (insert == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean addReview(RatingModel ratingModel){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COL_RATING_ID, ratingModel.getRatingId());
+        cv.put(COL_RATING, ratingModel.getRating());
+        cv.put(COL_COMMENT, ratingModel.getComment());
+
+        long insert = db.insert(RATING_TABLE, null, cv);
         if (insert == -1) {
             return false;
         } else {
@@ -456,6 +489,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return bookingList;
     }
 
+    public ArrayList<RatingModel> retrieveReviewFromCustomerId(int cusId){
+        ArrayList<RatingModel> ratingList = new ArrayList<>();
+
+        String query = "SELECT * FROM" + RATING_TABLE+ " WHERE " + COL_CUSID + " = " + cusId;
+        Cursor c = getReadableDatabase().rawQuery(query, null);
+        while (c.moveToNext()) {
+            int ratingId = c.getInt(c.getColumnIndex(COL_RATING_ID) + 0);
+            int barId = c.getInt(c.getColumnIndex(COL_BARID) + 0);
+            float rating = c.getFloat(c.getColumnIndex(COL_RATING) + 0);
+            String comment = c.getString(c.getColumnIndex(COL_COMMENT) + 0);
+            RatingModel ratingModel = new RatingModel(ratingId, cusId, barId, rating, comment);
+            ratingList.add(ratingModel);
+        }
+        return ratingList;
+    }
+
     public boolean addNotify(NotifyModel notify) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -501,4 +550,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "VALUES(0, \"Chris Evans\"), (1, 'Chris Hemsworth') , (2, 'Paul Rudd '), (3, 'Benedict Cumberbatch')";
         getWritableDatabase().execSQL(query);
     }
+
+
 }
