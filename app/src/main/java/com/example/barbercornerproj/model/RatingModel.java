@@ -1,31 +1,31 @@
 package com.example.barbercornerproj.model;
 
 public class RatingModel {
-    private String barberId;
-    private String userId;
+    private int barberId;
+    private int cusId;
 
-    public String getBarberId() {
+    public int getBarberId() {
         return barberId;
     }
 
-    public RatingModel(String barberId, String userId, int ratingId, float rating, String comment) {
+    public RatingModel(int barberId, int cusId, int ratingId, int rating, String comment) {
         this.barberId = barberId;
-        this.userId = userId;
+        this.cusId = cusId;
         this.ratingId = ratingId;
         this.rating = rating;
         this.comment = comment;
     }
 
-    public void setBarberId(String barberId) {
+    public void setBarberId(int barberId) {
         this.barberId = barberId;
     }
 
-    public String getUserId() {
-        return userId;
+    public int getCusId() {
+        return cusId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCusId(int cusId) {
+        this.cusId = cusId;
     }
 
     public int getRatingId() {
@@ -36,11 +36,11 @@ public class RatingModel {
         this.ratingId = ratingId;
     }
 
-    public float getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(float rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
@@ -53,7 +53,7 @@ public class RatingModel {
     }
 
     private int ratingId;
-    private float rating;
+    private int rating;
     private String comment;
 
 }

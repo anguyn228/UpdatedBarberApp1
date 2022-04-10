@@ -138,7 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String SQL_TABLE=" CREATE TABLE " + OrderHelper.CART_TABLE + " ("
                 + OrderHelper.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "userId INTEGER "
+                + "userId INTEGER, "
                 + OrderHelper.COLUMN_NAME +" TEXT NOT NULL,"
                 + OrderHelper.COLUMN_QUANTITY +" TEXT NOT NULL,"
                 + OrderHelper.COLUMN_PRICE +" TEXT NOT NULL);";
@@ -146,9 +146,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Create rating table
         String ratingTable = " CREATE TABLE " + RATING_TABLE + "(" +
-                COL_RATING_ID + "INTEGER PRIMARY KEY AUTOINCREMENT," +
-                COL_RATING + "TEXT," +
-                COL_COMMENT + "TEXT)";
+                COL_RATING_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COL_RATING + " TEXT," +
+                COL_COMMENT + " TEXT," +
+                COL_BARID + " INTEGER," +
+                COL_CUSID + " INTEGER)";
         db.execSQL(ratingTable);
 
 
@@ -248,10 +250,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put(COL_RATING_ID, ratingModel.getRatingId());
         cv.put(COL_RATING, ratingModel.getRating());
         cv.put(COL_COMMENT, ratingModel.getComment());
-
+        cv.put(COL_BARID, ratingModel.getBarberId());
+        cv.put(COL_CUSID, ratingModel.getCusId());
         long insert = db.insert(RATING_TABLE, null, cv);
         if (insert == -1) {
             return false;
@@ -497,7 +499,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             int ratingId = c.getInt(c.getColumnIndex(COL_RATING_ID) + 0);
             int barId = c.getInt(c.getColumnIndex(COL_BARID) + 0);
-            float rating = c.getFloat(c.getColumnIndex(COL_RATING) + 0);
+            int rating = c.getInt(c.getColumnIndex(COL_RATING) + 0);
             String comment = c.getString(c.getColumnIndex(COL_COMMENT) + 0);
             RatingModel ratingModel = new RatingModel(ratingId, cusId, barId, rating, comment);
             ratingList.add(ratingModel);
