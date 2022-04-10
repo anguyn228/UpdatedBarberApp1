@@ -152,8 +152,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_BARID + " INTEGER," +
                 COL_CUSID + " INTEGER)";
         db.execSQL(ratingTable);
-
-
     }
 
     @Override
@@ -489,6 +487,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             bookingList.add(bookingModel);
         }
         return bookingList;
+    }
+
+    public ArrayList<RatingModel> retrieveReviewFromBarberId(int barberId){
+        ArrayList<RatingModel> ratingList = new ArrayList<>();
+
+        String query = "SELECT * FROM " + RATING_TABLE+ " WHERE " + COL_BARID + " = " + barberId;
+        Cursor c = getReadableDatabase().rawQuery(query, null);
+        while (c.moveToNext()) {
+            int ratingId = c.getInt(c.getColumnIndex(COL_RATING_ID) + 0);
+            int cusId = c.getInt(c.getColumnIndex(COL_CUSID) + 0);
+            int rating = c.getInt(c.getColumnIndex(COL_RATING) + 0);
+            String comment = c.getString(c.getColumnIndex(COL_COMMENT) + 0);
+            RatingModel ratingModel = new RatingModel(ratingId, barberId, cusId, rating, comment);
+            ratingList.add(ratingModel);
+        }
+        return ratingList;
     }
 
     public ArrayList<RatingModel> retrieveReviewFromCustomerId(int cusId){
